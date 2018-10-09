@@ -3,7 +3,8 @@
 // and some more code from https://github.com/deanmcpherson/react-native-sortable-listview
 
 import React from 'react';
-import { Animated } from 'react-native'; // TODO: this should be via reanimated
+import { Animated } from 'react-native';
+// import Animated from 'react-native-reanimated'; // TODO: find a way to use this
 
 export class SortRow extends React.Component {
   constructor(props) {
