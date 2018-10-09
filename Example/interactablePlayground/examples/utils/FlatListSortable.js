@@ -11,9 +11,8 @@ import {
   Dimensions,
   LayoutAnimation,
   FlatList,
+  InteractionManager,
 } from 'react-native';
-
-import PropTypes from 'prop-types';
 
 import { Row } from './Row';
 import { SortRow } from './SortRow';
@@ -21,29 +20,17 @@ import { SortRow } from './SortRow';
 const HEIGHT = Dimensions.get('window').height;
 
 export class FlatListSortable extends React.Component {
-  static propTypes = {
-    data: PropTypes.array.isRequired,
-    renderItem: PropTypes.func.isRequired,
-  };
-
-  constructor(props) {
-    super(props);
+  constructor(props, context) {
+    super(props, context);
 
     const currentPanValue = { x: 0, y: 0 };
 
     this.state = {
-      pan: new Animated.ValueXY(currentPanValue),
       active: false,
       hovering: false,
+      pan: new Animated.ValueXY(currentPanValue),
     };
-
     this.listener = this.state.pan.addListener(e => (this.panY = e.y));
-
-    this.handleRowActive = this.handleRowActive.bind(this);
-    this.renderItem = this.renderItem.bind(this);
-    this.handleWrapperLayout = this.handleWrapperLayout.bind(this);
-    this.cancel = this.cancel.bind(this);
-
     const onPanResponderMoveCb = Animated.event([
       null,
       {
@@ -95,9 +82,7 @@ export class FlatListSortable extends React.Component {
         this.moved = false;
         props.onMoveEnd && props.onMoveEnd();
         if (!this.state.active) {
-          if (this.state.hovering) {
-            this.setState({ hovering: false });
-          }
+          if (this.state.hovering) this.setState({ hovering: false });
           this.moveY = null;
           return;
         }
@@ -128,17 +113,6 @@ export class FlatListSortable extends React.Component {
         };
 
         props.onRowMoved && props.onRowMoved(args);
-        if (props._legacySupport) {
-          // rely on parent data changes to set state changes
-          // LayoutAnimation.easeInEaseOut()
-          this.state.active = false;
-          this.state.hovering = false;
-        } else {
-          this.setState({
-            active: false,
-            hovering: false,
-          });
-        }
 
         const MAX_HEIGHT = Math.max(
           0,
@@ -151,14 +125,16 @@ export class FlatListSortable extends React.Component {
           this.scrollTo({ y: MAX_HEIGHT });
         }
 
-        this.state.active = false;
-        this.state.hovering = false;
+        this.setState({
+          active: false,
+          hovering: false,
+        });
         this.moveY = null;
       },
     });
 
     this.scrollValue = 0;
-    // Gets calculated on scroll, but if you havent scrolled needs an initial value
+    // Gets calculated on scroll, but if you haven't scrolled needs an initial value
     this.scrollContainerHeight = HEIGHT * 1.2;
 
     this.firstRowY = undefined;
@@ -168,99 +144,7 @@ export class FlatListSortable extends React.Component {
 
   _keyExtractor = (item, index) => index.toString();
 
-  //  FIXME: need better implementation
-  //   shouldComponentUpdate(props) {
-  //     return true;
-  //   }
-
-  componentWillMount() {
-    this.setOrder(this.props);
-  }
-
-  componentWillReceiveProps(props) {
-    this.setOrder(props);
-  }
-
-  componentWillUnmount() {
-    this.state.pan.removeListener(this.listener);
-  }
-
-  setOrder = props => {
-    this.order = props.order || Object.keys(props.data) || [];
-  };
-
-  render() {
-    return (
-      <View style={styles.mainContainer} onLayout={this.handleWrapperLayout}>
-        <FlatList
-          {...this.props}
-          {...this.state.panResponder.panHandlers}
-          ref="list"
-          onScroll={this.handleScroll}
-          onContentSizeChange={this.handleContentSizeChange}
-          onLayout={this.handleListLayout}
-          keyExtractor={this._keyExtractor}
-          data={this.props.data}
-          renderItem={this.renderItem}
-          scrollEnabled={!this.state.active}
-        />
-        {this.renderActive()}
-      </View>
-    );
-  }
-
-  renderActiveDivider = () => {
-    const height = this.state.active
-      ? this.state.active.layout.frameHeight
-      : null;
-    if (this.props.renderActiveDivider) {
-      return this.props.renderActiveDivider(height);
-    }
-
-    // console.log("height", height);
-    return <View style={{ height }} />;
-  };
-
-  renderItem(data, active) {
-    const Component = active ? SortRow : Row;
-    const isActiveRow =
-      !active &&
-      this.state.active &&
-      this.state.active.rowData.index === data.index;
-    const hoveringIndex =
-      this.order[this.state.hovering] || this.state.hovering;
-
-    // console.log("hoveringIndex", hoveringIndex);
-    // console.log("data.index", data.index);
-    // console.log("hoveringIndex === data.index", hoveringIndex === data.index);
-
-    return (
-      <Component
-        {...this.props}
-        activeDivider={this.renderActiveDivider()}
-        active={active || isActiveRow}
-        hovering={Number(hoveringIndex) === data.index}
-        list={this}
-        rowData={data}
-        ref={view => {
-          this._rowRefs[active ? 'ghost' : data.index] = view;
-        }}
-        panResponder={this.state.panResponder}
-        onRowActive={this.handleRowActive}
-        onRowLayout={this._updateLayoutMap(data.index)}
-      />
-    );
-  }
-
-  handleWrapperLayout(e) {
-    const layout = e.nativeEvent.layout;
-    this.wrapperLayout = {
-      frameHeight: layout.height,
-      pageY: layout.y,
-    };
-  }
-
-  cancel() {
+  cancel = () => {
     if (!this.moved) {
       this.state.active && this.props.onMoveCancel && this.props.onMoveCancel();
       this.setState({
@@ -268,23 +152,23 @@ export class FlatListSortable extends React.Component {
         hovering: false,
       });
     }
-  }
+  };
 
-  renderActive() {
-    if (!this.state.active) return;
-    const index = this.state.active.rowData.index;
-    return this.renderItem(
-      { item: this.props.data[index], index: index },
-      true
+  measureWrapper = () => {
+    if (!this.refs.wrapper) return;
+    this.refs.wrapper.measure(
+      (frameX, frameY, frameWidth, frameHeight, pageX, pageY) => {
+        const layout = {
+          frameX,
+          frameY,
+          frameWidth,
+          frameHeight,
+          pageX,
+          pageY,
+        };
+        this.wrapperLayout = layout;
+      }
     );
-  }
-
-  _updateLayoutMap = index => e => {
-    const layout = e.nativeEvent.layout;
-    if (this.firstRowY === undefined || layout.y < this.firstRowY) {
-      this.firstRowY = layout.y;
-    }
-    this.layoutMap[index] = layout;
   };
 
   handleListLayout = e => {
@@ -326,14 +210,11 @@ export class FlatListSortable extends React.Component {
       const SCROLL_MAX_CHANGE = 20;
 
       // console.log("moveY < SCROLL_LOWER_BOUND && currentScrollValue > 0", moveY < SCROLL_LOWER_BOUND && currentScrollValue > 0);
-
       if (moveY < SCROLL_LOWER_BOUND && currentScrollValue > 0) {
         const PERCENTAGE_CHANGE = 1 - moveY / SCROLL_LOWER_BOUND;
         newScrollValue =
           currentScrollValue - PERCENTAGE_CHANGE * SCROLL_MAX_CHANGE;
-        if (newScrollValue < 0) {
-          newScrollValue = 0;
-        }
+        if (newScrollValue < 0) newScrollValue = 0;
       }
       if (
         moveY > SCROLL_HIGHER_BOUND &&
@@ -343,15 +224,16 @@ export class FlatListSortable extends React.Component {
           1 - (this.listLayout.height - moveY) / SCROLL_LOWER_BOUND;
         newScrollValue =
           currentScrollValue + PERCENTAGE_CHANGE * SCROLL_MAX_CHANGE;
-
-        if (newScrollValue > MAX_SCROLL_VALUE) {
+        if (newScrollValue > MAX_SCROLL_VALUE)
           newScrollValue = MAX_SCROLL_VALUE;
-        }
       }
       // console.log("newScrollValue !== null && !this.props.limitScrolling", newScrollValue !== null && !this.props.limitScrolling);
       if (newScrollValue !== null && !this.props.limitScrolling) {
-        this.scrollValue = newScrollValue * 1.25;
-        this.scrollTo({ y: this.scrollValue });
+        this.scrollValue = newScrollValue;
+        this.scrollTo({
+          y: this.scrollValue,
+          animated: !this.props.disableAnimatedScrolling,
+        });
       }
       this.moved && this.checkTargetElement();
       requestAnimationFrame(this.scrollAnimation);
@@ -362,17 +244,16 @@ export class FlatListSortable extends React.Component {
     const itemHeight = this.state.active.layout.frameHeight;
     const SLOP = this.direction === 'down' ? itemHeight : 0;
     const scrollValue = this.scrollValue;
+
     const moveY = this.moveY - this.wrapperLayout.pageY;
+
     const activeRowY = scrollValue + moveY - this.firstRowY;
 
     let indexHeight = 0.0;
     let i = 0;
     let row;
-
     const order = this.order;
-
     let isLast = false;
-
     while (indexHeight < activeRowY + SLOP) {
       const key = order[i];
       row = this.layoutMap[key];
@@ -383,25 +264,24 @@ export class FlatListSortable extends React.Component {
       indexHeight += row.height;
       i++;
     }
-    if (!isLast) {
-      i--;
-    }
+    if (!isLast) i--;
 
-    if (i !== this.state.hovering && i >= 0) {
-      LayoutAnimation.easeInEaseOut();
+    if (String(i) !== this.state.hovering && i >= 0) {
+      // LayoutAnimation is not supported in react-native-web
+      LayoutAnimation && LayoutAnimation.easeInEaseOut();
       this._previouslyHovering = this.state.hovering;
       this.__activeY = this.panY;
       this.setState({
-        hovering: i,
+        hovering: String(i),
       });
     }
   };
 
-  handleRowActive(row) {
-    // console.log("handleRowActive");
+  handleRowActive = row => {
     if (this.props.disableSorting) return;
     this.state.pan.setValue({ x: 0, y: 0 });
-    LayoutAnimation.easeInEaseOut();
+    // LayoutAnimation is not supported in react-native-web
+    LayoutAnimation && LayoutAnimation.easeInEaseOut();
     this.moveY = row.layout.pageY + row.layout.frameHeight / 2;
     // console.log("row.rowData.index", row.rowData.index, typeof row.rowData.index)
     this.setState(
@@ -412,12 +292,122 @@ export class FlatListSortable extends React.Component {
       this.scrollAnimation
     );
     this.props.onRowActive && this.props.onRowActive(row);
+  };
+
+  renderActiveDivider = () => {
+    const height = this.state.active
+      ? this.state.active.layout.frameHeight
+      : null;
+    if (this.props.renderActiveDivider) {
+      return this.props.renderActiveDivider(height);
+    }
+    return <View style={{ height }} />;
+  };
+
+  renderItem = (data, active) => {
+    const Component = active ? SortRow : Row;
+    const isActiveRow =
+      !active &&
+      this.state.active &&
+      this.state.active.rowData.index === data.index;
+    const hoveringIndex =
+      this.order[this.state.hovering] || this.state.hovering;
+
+    // console.log("hoveringIndex", hoveringIndex);
+    // console.log("data.index", data.index);
+    // console.log("hoveringIndex === data.index", hoveringIndex === data.index);
+
+    return (
+      <Component
+        {...this.props}
+        activeDivider={this.renderActiveDivider()}
+        active={active || isActiveRow}
+        hovering={Number(hoveringIndex) === data.index}
+        list={this}
+        rowData={data}
+        ref={view => {
+          this._rowRefs[active ? 'ghost' : data.index] = view;
+        }}
+        panResponder={this.state.panResponder}
+        onRowActive={this.handleRowActive}
+        onRowLayout={this._updateLayoutMap(data.index)}
+      />
+    );
+  };
+
+  _updateLayoutMap = index => e => {
+    const layout = e.nativeEvent.layout;
+    if (this.firstRowY === undefined || layout.y < this.firstRowY) {
+      this.firstRowY = layout.y;
+    }
+    this.layoutMap[index] = layout;
+  };
+
+  renderActive = () => {
+    if (!this.state.active) return;
+    const index = this.state.active.rowData.index;
+    return this.renderItem(
+      { item: this.props.data[index], index: index },
+      true
+    );
+  };
+
+  componentWillMount() {
+    this.setOrder(this.props);
   }
+
+  componentDidMount() {
+    InteractionManager.runAfterInteractions(() => {
+      this.timer = setTimeout(() => this && this.measureWrapper(), 0);
+    });
+  }
+
+  componentWillReceiveProps(props) {
+    this.setOrder(props);
+  }
+
+  componentWillUnmount() {
+    this.timer && clearTimeout(this.timer);
+    this.state.pan.removeListener(this.listener);
+  }
+
+  setOrder = props => {
+    this.order = props.order || Object.keys(props.data) || [];
+  };
 
   scrollTo = (...args) => {
     // console.log("...args", ...args);
+    if (!this.refs.list) return;
     this.refs.list.scrollTo(...args);
   };
+
+  getScrollResponder = () => {
+    if (!this.refs.list) return;
+    this.refs.list.getScrollResponder();
+  };
+
+  render() {
+    const scrollEnabled =
+      !this.state.active && this.props.scrollEnabled !== false;
+
+    return (
+      <View ref="wrapper" style={styles.mainContainer} collapsable={false}>
+        <FlatList
+          {...this.props}
+          {...this.state.panResponder.panHandlers}
+          ref="list"
+          onScroll={this.handleScroll}
+          onContentSizeChange={this.handleContentSizeChange}
+          onLayout={this.handleListLayout}
+          keyExtractor={this._keyExtractor}
+          data={this.props.data}
+          renderItem={this.renderItem}
+          scrollEnabled={scrollEnabled}
+        />
+        {this.renderActive()}
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
