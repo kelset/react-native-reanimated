@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
-import Interactable from '../../Interactable';
+// import Interactable from '../../Interactable';
 import { FlatListSortable } from './utils/FlatListSortable';
 
 let DATA = [
