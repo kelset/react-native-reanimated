@@ -14,7 +14,7 @@ const Screen = {
   height: Dimensions.get('window').height - 75,
 };
 
-export default class NotifPanel extends Component {
+export default class NotificationPanel extends Component {
   render() {
     return (
       <View style={styles.container}>

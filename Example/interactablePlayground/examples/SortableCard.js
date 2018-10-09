@@ -4,20 +4,22 @@ import Interactable from '../../Interactable';
 
 export default class SortableCard extends Component {
   state = {
-    order: ['first', 'second', 'third']
-  }
+    order: ['first', 'second', 'third'],
+  };
 
   render() {
     return (
       <View style={styles.container}>
-        {this.state.order.map((item) => (<Interactable.View
-          key={item}
-          horizontalOnly={true}
-          snapPoints={[{ x: 360 }, { x: 0, damping: 0.5 }, { x: -360 }]}>
-          <View style={styles.card} >
-            <Text style={styles.cardText}>{`${item}`}</Text>
-          </View>
-        </Interactable.View>))}
+        {this.state.order.map(item => (
+          <Interactable.View
+            key={item}
+            horizontalOnly={true}
+            snapPoints={[{ x: 360 }, { x: 0, damping: 0.5 }, { x: -360 }]}>
+            <View style={styles.card}>
+              <Text style={styles.cardText}>{`${item}`}</Text>
+            </View>
+          </Interactable.View>
+        ))}
       </View>
     );
   }
@@ -39,8 +41,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  cardText:{
+  cardText: {
     color: 'white',
     fontSize: 20,
-  }
+  },
 });

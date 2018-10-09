@@ -6,18 +6,18 @@ import { RectButton, ScrollView } from 'react-native-gesture-handler';
 import ChatHeads from './examples/ChatHeads';
 import SwipeableCard from './examples/SwipeableCard';
 import SortableCard from './examples/SortableCard';
-import IconDrawer from './examples/IconDrawer';
-import CollapsingHeader from './examples/CollapsingHeader';
+// import IconDrawer from './examples/IconDrawer';
+// import CollapsingHeader from './examples/CollapsingHeader';
 import MoreDrawers from './examples/MoreDrawers';
 import MoreChatHeads from './examples/MoreChatHeads';
 import HandleTouches from './examples/HandleTouches';
-import TouchesInside from './examples/TouchesInside';
-import TouchesInsideStatic from './examples/TouchesInsideStatic';
-import HandleRelayout from './examples/HandleRelayout';
+// import TouchesInside from './examples/TouchesInside';
+// import TouchesInsideStatic from './examples/TouchesInsideStatic';
+// import HandleRelayout from './examples/HandleRelayout';
 import SideMenu from './examples/SideMenu';
 import SnapTo from './examples/SnapTo';
 import ChangePosition from './examples/ChangePosition';
-import AlertAreas from './examples/AlertAreas';
+// import AlertAreas from './examples/AlertAreas';
 import CollapsingHeaderWithScroll from './examples/CollapsingHeaderWithScroll';
 
 // Real life Examples
@@ -25,7 +25,7 @@ import RowActions1 from './real-life-examples/RowActions1';
 import RowActions2 from './real-life-examples/RowActions2';
 import NowCard from './real-life-examples/NowCard';
 import TinderCard from './real-life-examples/TinderCard';
-import NotifPanel from './real-life-examples/NotifPanel';
+import NotificationPanel from './real-life-examples/NotificationPanel';
 import MapPanel from './real-life-examples/MapPanel';
 import CollapsibleFilter from './real-life-examples/CollapsibleFilter';
 import CollapsibleCalendar from './real-life-examples/CollapsibleCalendar';
@@ -62,7 +62,10 @@ export const SCREENS = {
   IRowActions2: { screen: RowActions2, title: 'Row Actions (Apple Style)' },
   INowCard: { screen: NowCard, title: 'Google Now-Style Card' },
   ITinderCard: { screen: TinderCard, title: 'Tinder-Style Card' },
-  INotifPanel: { screen: NotifPanel, title: 'Notification Panel' },
+  INotificationPanel: {
+    screen: NotificationPanel,
+    title: 'Notification Panel',
+  },
   IMapPanel: { screen: MapPanel, title: 'Apple Maps-Style Panel' },
   ICollapsibleFilter: {
     screen: CollapsibleFilter,
