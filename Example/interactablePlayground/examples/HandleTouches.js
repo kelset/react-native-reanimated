@@ -1,14 +1,8 @@
-import React, { Component } from 'react';
-import {
-  StyleSheet,
-  View,
-  ListView,
-  TouchableOpacity,
-  Text,
-} from 'react-native';
+import React from 'react';
+import { StyleSheet, ListView, TouchableOpacity, Text } from 'react-native';
 import Interactable from '../../Interactable';
 
-export default class HandleTouches extends Component {
+export default class HandleTouches extends React.Component {
   constructor() {
     super();
     const ds = new ListView.DataSource({
