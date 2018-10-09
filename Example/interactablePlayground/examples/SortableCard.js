@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 // import Interactable from '../../Interactable';
 import { FlatListSortable } from './utils/FlatListSortable';
+import { DnDTestScreen } from './utils/DnDTestScreen';
 
 export default class SortableCard extends React.Component {
   state = {
@@ -21,12 +22,16 @@ export default class SortableCard extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <FlatListSortable
-          onRowMoved={this.rowMoved}
-          data={this.state.data}
-          renderItem={this.renderItem}
-          style={styles.list}
-        />
+        {!this.props.notActualValue ? (
+          <DnDTestScreen />
+        ) : (
+          <FlatListSortable
+            onRowMoved={this.rowMoved}
+            data={this.state.data}
+            renderItem={this.renderItem}
+            style={styles.list}
+          />
+        )}
       </View>
     );
   }
