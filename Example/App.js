@@ -53,6 +53,7 @@ class MainScreen extends React.Component {
   static navigationOptions = {
     title: '🎬 Reanimated Examples',
   };
+
   render() {
     const data = Object.keys(SCREENS).map(key => ({ key }));
     return (

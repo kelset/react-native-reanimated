@@ -5,6 +5,7 @@ import { RectButton, ScrollView } from 'react-native-gesture-handler';
 // Basic Examples
 import ChatHeads from './examples/ChatHeads';
 import SwipeableCard from './examples/SwipeableCard';
+import SortableCard from './examples/SortableCard';
 import IconDrawer from './examples/IconDrawer';
 import CollapsingHeader from './examples/CollapsingHeader';
 import MoreDrawers from './examples/MoreDrawers';
@@ -33,6 +34,7 @@ import RealChatHeads from './real-life-examples/RealChatHeads';
 export const SCREENS = {
   IChatHeads: { screen: ChatHeads, title: 'Chat Heads' },
   ISwipeableCard: { screen: SwipeableCard, title: 'Swipeable Card' },
+  ISortableCard: { screen: SortableCard, title: 'Sortable Card' },
   IMoreDrawers: { screen: MoreDrawers, title: 'More Drawers (row actions)' },
   IMoreChatHeads: { screen: MoreChatHeads, title: 'More Chat Heads' },
   IHandleTouches: { screen: HandleTouches, title: 'Handle Touches' },
