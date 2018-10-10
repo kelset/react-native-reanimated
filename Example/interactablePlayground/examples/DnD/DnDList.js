@@ -52,6 +52,7 @@ export class DnDList extends React.Component {
     this.scrollContentOffset = { y: 0, x: 0 };
   }
 
+  // weird that this is not triggering anything, this needs to change to getDerived
   componentWillReceiveProps({ rows }) {
     this.setState({ rows: rows });
   }
@@ -97,6 +98,7 @@ export class DnDList extends React.Component {
   _renderRows = () => {
     return this.state.rows.map((item, idx, items) => {
       return (
+        // TODO: Need to add a way to modify the styling of the overall piece here
         <DraggableRowComponent
           key={item.key}
           item={item}

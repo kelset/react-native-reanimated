@@ -33,7 +33,7 @@ export class DraggableRowComponent extends React.Component {
     this._editable = e;
     let self = this;
     Animated.timing(this.editAnim, {
-      toValue: this._editable ? 40 : 0,
+      toValue: this._editable ? 60 : 0,
       easing: Easing.linear,
       duration: 100,
       //   useNativeDriver: true,
@@ -51,7 +51,7 @@ export class DraggableRowComponent extends React.Component {
     // this.lastStart = 0
     this.dragging = false;
     this._editable = props.editable;
-    this.editAnim = new Animated.Value(this._editable ? 40 : 0);
+    this.editAnim = new Animated.Value(this._editable ? 60 : 0);
     this.scrollDeltaAnim = new Animated.Value(0);
     this.dragAnim = new Animated.Value(0);
     this.drag_anim_pos = 0;
@@ -179,11 +179,12 @@ export class DraggableRowComponent extends React.Component {
       this.context.shellContext.setScrollEnabled(false);
       this.context.shellContext._dragStart(gestureState, this);
       this.setState({ zIndex: 1000 }, () => {
+        // TODO: this is the one to blame for bouncyness
         Animated.spring(this.anim, {
           toValue: 0,
-          velocity: 2,
-          tension: -10,
-          friction: 1,
+          velocity: 1,
+          tension: 10,
+          friction: 2,
           //   useNativeDriver: true,
         }).start();
       });
@@ -307,6 +308,7 @@ export class DraggableRowComponent extends React.Component {
         bottom: 0,
         left: this.start,
         width: this.size,
+        margin: 10,
         flexDirection: 'row',
         justifyContent: 'center',
         backgroundColor: 'white',
@@ -325,7 +327,7 @@ export class DraggableRowComponent extends React.Component {
           {
             scale: this.anim.interpolate({
               inputRange: [0, 1],
-              outputRange: [1, 1.9],
+              outputRange: [1, 1.3],
             }),
           },
         ],
@@ -337,6 +339,7 @@ export class DraggableRowComponent extends React.Component {
         height: this.size,
         right: 0,
         left: 0,
+        margin: 10,
         flexDirection: 'row',
         justifyContent: 'center',
         backgroundColor: 'white',
@@ -355,20 +358,23 @@ export class DraggableRowComponent extends React.Component {
           {
             scale: this.anim.interpolate({
               inputRange: [0, 1],
-              outputRange: [1, 1.9],
+              outputRange: [1, 1.3],
             }),
           },
         ],
       };
     }
+
     if (Platform.OS === 'android') {
       animationStyle.elevation = this.state.zIndex === 0 ? 0 : 2;
     } else {
       animationStyle.zIndex = this.state.zIndex;
     }
+
     let rowContent = this.context.shellContext.renderRow(this.props.item);
     let dragHandle = null;
     let draggable = this.context.shellContext.isDraggable(this);
+
     if (!this.context.shellContext.props.noDragHandle) {
       if (draggable) {
         dragHandle = (
@@ -414,6 +420,7 @@ export class DraggableRowComponent extends React.Component {
         />
       );
     }
+
     if (this.context.shellContext.props.noDragHandle) {
       if (this._editable || !draggable) {
         return (
