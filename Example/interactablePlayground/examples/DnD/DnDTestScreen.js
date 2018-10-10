@@ -5,7 +5,7 @@ import { SafeAreaView, StyleSheet, View, Text } from 'react-native';
 
 import { DnDList } from './DnDList';
 
-const ROW_COUNT = 20;
+const ROW_COUNT = 15;
 const ROW_HEIGHT = 60;
 
 const arrayMove = (arr, oldIndex, newIndex) => {

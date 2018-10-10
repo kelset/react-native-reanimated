@@ -18,6 +18,7 @@ export class DraggableRowComponent extends React.Component {
   get scrollDelta() {
     return this._scrollDelta;
   }
+
   set scrollDelta(sd) {
     this._scrollDelta = sd;
     this.scrollDeltaAnim.setValue(this.scrollDelta);
