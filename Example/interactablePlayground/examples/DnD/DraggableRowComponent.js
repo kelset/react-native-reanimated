@@ -10,8 +10,6 @@ import {
   Platform,
 } from 'react-native';
 
-import PropTypes from 'prop-types';
-
 export class DraggableRowComponent extends React.Component {
   _scrollDelta = 0;
 
@@ -23,10 +21,6 @@ export class DraggableRowComponent extends React.Component {
     this._scrollDelta = sd;
     this.scrollDeltaAnim.setValue(this.scrollDelta);
   }
-
-  static contextTypes = {
-    shellContext: PropTypes.any,
-  };
 
   constructor(props) {
     super(props);
@@ -46,7 +40,7 @@ export class DraggableRowComponent extends React.Component {
   get start() {
     let _start = 0;
     for (let i = 0; i < this.props.idx; i++) {
-      _start += this.context.shellContext.itemSize(i);
+      _start += this.props.itemSize(i);
     }
     return _start;
   }
@@ -62,7 +56,7 @@ export class DraggableRowComponent extends React.Component {
   }
 
   get size() {
-    return this.context.shellContext.itemSize(this.props.idx);
+    return this.props.itemSize(this.props.idx);
   }
 
   containsPosition = middle => {
@@ -86,7 +80,7 @@ export class DraggableRowComponent extends React.Component {
       onStartShouldSetPanResponderCapture: (evt, gestureState) => {
         // console.log('onStartShouldSetPanResponderCapture', gestureState.dx, gestureState.dy)
         // self.lastStart = Date.now()
-        if (this.context.shellContext.props.horizontal) {
+        if (this.props.horizontal) {
           self.dragStarter = setTimeout(() => {
             self.dragging = true;
             self._dragStart(gestureState);
@@ -143,18 +137,18 @@ export class DraggableRowComponent extends React.Component {
         return true;
       },
     });
-    this.context.shellContext._registerDraggableRow(this);
+    this.props.registerDraggableRow(this);
   }
 
   componentWillUnmount() {
-    this.context.shellContext._unregisterDraggableRow(this);
+    this.props.unregisterDraggableRow(this);
   }
 
   _dragStart = gestureState => {
     // console.log('drag start', gestureState)
-    if (this.context.shellContext.isDraggable(this)) {
-      this.context.shellContext.setScrollEnabled(false);
-      this.context.shellContext._dragStart(gestureState, this);
+    if (this.props.isDraggable(this)) {
+      this.props.setScrollEnabled(false);
+      this.props.dragStart(gestureState, this);
       this.setState({ zIndex: 1000 }, () => {
         // TODO: this is the one to blame for bounciness
         Animated.spring(this.anim, {
@@ -170,34 +164,34 @@ export class DraggableRowComponent extends React.Component {
 
   _dragMove = gestureState => {
     // console.log('drag move', JSON.stringify(gestureState, null, 2))
-    if (this.context.shellContext.isDraggable(this)) {
-      if (this.context.shellContext.props.horizontal) {
+    if (this.props.isDraggable(this)) {
+      if (this.props.horizontal) {
         this.dragAnim.setValue(gestureState.dx);
         this.drag_anim_pos = gestureState.dx;
       } else {
         this.dragAnim.setValue(gestureState.dy);
         this.drag_anim_pos = gestureState.dy;
       }
-      this.context.shellContext._dragMove(gestureState, this);
+      this.props.dragMove(gestureState, this);
     }
   };
 
   _dragDrop = gestureState => {
     // console.log('drag end', gestureState.dy)
-    this.context.shellContext.setScrollEnabled(true);
-    if (this.context.shellContext._dragDrop(gestureState, this)) {
+    this.props.setScrollEnabled(true);
+    if (this.props.dragDrop(gestureState, this)) {
       this.dragAnim.setValue(0);
       this.drag_anim_pos = 0;
     } else {
-      this.context.shellContext._dragCancel(gestureState, this);
+      this.props.dragCancel(gestureState, this);
       this._moveBack();
     }
   };
 
   _dragCancel = gestureState => {
     // console.log('drag cancel')
-    this.context.shellContext.setScrollEnabled(true);
-    this.context.shellContext._dragCancel(gestureState, this);
+    this.props.setScrollEnabled(true);
+    this.props.dragCancel(gestureState, this);
     this._moveBack();
   };
 
@@ -267,14 +261,14 @@ export class DraggableRowComponent extends React.Component {
       justifyContent: 'center',
       position: 'absolute',
       top: 0,
-      bottom: this.context.shellContext.props.horizontal ? 0 : null,
+      bottom: this.props.horizontal ? 0 : null,
       // backgroundColor: '#40413adf',
-      height: this.context.shellContext.props.horizontal ? null : this.size,
+      height: this.props.horizontal ? null : this.size,
     };
 
     let baseStyle = null;
     let animationStyle = null;
-    if (this.context.shellContext.props.horizontal) {
+    if (this.props.horizontal) {
       baseStyle = {
         position: 'absolute',
         top: 0,
@@ -344,14 +338,11 @@ export class DraggableRowComponent extends React.Component {
       animationStyle.zIndex = this.state.zIndex;
     }
 
-    let rowContent = this.context.shellContext.renderRow(
-      this.props.item,
-      this.props.idx
-    );
+    let rowContent = this.props.renderRow(this.props.item, this.props.idx);
     let dragHandle = null;
-    let draggable = this.context.shellContext.isDraggable(this);
+    let draggable = this.props.isDraggable(this);
 
-    if (!this.context.shellContext.props.noDragHandle) {
+    if (!this.props.noDragHandle) {
       if (draggable) {
         dragHandle = (
           <Animated.View
@@ -371,7 +362,7 @@ export class DraggableRowComponent extends React.Component {
       }
     }
 
-    if (this.context.shellContext.props.noDragHandle) {
+    if (this.props.noDragHandle) {
       // this props seem to suggest that you can have the whole row draggable
       if (!draggable) {
         return (

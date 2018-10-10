@@ -5,8 +5,6 @@ import { View, ScrollView } from 'react-native';
 
 import uuid from 'uuid';
 
-import PropTypes from 'prop-types';
-
 import { DraggableRowComponent } from './DraggableRowComponent';
 
 const SCROLL_BY = 15;
@@ -41,14 +39,6 @@ export class DnDList extends React.Component {
     this.setState({ rows: rows });
   }
 
-  getChildContext() {
-    return { shellContext: this };
-  }
-
-  static childContextTypes = {
-    shellContext: PropTypes.any,
-  };
-
   _registerDraggableRow = draggableRow => {
     // console.log('Register',draggableRow.props.item)
     this.draggableRows.push(draggableRow);
@@ -72,7 +62,23 @@ export class DnDList extends React.Component {
     return this.state.rows.map((item, idx, items) => {
       return (
         // TODO: Need to add a way to modify the styling of the overall piece here
-        <DraggableRowComponent key={item.key} item={item} idx={idx} />
+        <DraggableRowComponent
+          key={item.key}
+          item={item}
+          idx={idx}
+          horizontal={this.props.horizontal}
+          noDragHandle={this.props.noDragHandle}
+          itemSize={this.itemSize}
+          registerDraggableRow={this._registerDraggableRow}
+          unregisterDraggableRow={this._unregisterDraggableRow}
+          isDraggable={this.isDraggable}
+          setScrollEnabled={this.setScrollEnabled}
+          dragStart={this._dragStart}
+          dragMove={this._dragMove}
+          dragDrop={this._dragDrop}
+          dragCancel={this._dragCancel}
+          renderRow={this.renderRow}
+        />
       );
     });
   };
@@ -302,7 +308,6 @@ export class DnDList extends React.Component {
   };
 
   render() {
-    let rows = this._renderRows();
     let contentSize = 0;
     for (let i = 0; i < this.state.rows.length; i++) {
       contentSize += this.itemSize(i);
@@ -325,7 +330,7 @@ export class DnDList extends React.Component {
             height: this.props.horizontal ? null : contentSize,
             width: this.props.horizontal ? contentSize : null,
           }}>
-          {rows}
+          {this._renderRows()}
         </View>
       </ScrollView>
     );
