@@ -1,7 +1,7 @@
 // https://github.com/gyetvan-andras/react-native-dnd-list/blob/master/DnDTestScreen.js
 
 import React from 'react';
-import { SafeAreaView, StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 
 import { DnDList } from './DnDList';
 
@@ -26,12 +26,11 @@ export class DnDTestScreen extends React.Component {
     // let size = [];
     for (let i = 0; i < ROW_COUNT; i++) {
       this.rows.push({
-        // height: ROW_HEIGHT,
-        key: i + 1,
         text: `${i + 1}`,
-        // optional fields
+        // == optional fields ==
         // draggable: true,
         // locked: boolean - basically defaults to false
+        // height: ROW_HEIGHT, -- if you add this, you need to implement itemSizes too
       });
     }
     // size = this.rows.map(row => row.height); // .push(40 + (i * 3))
@@ -40,18 +39,16 @@ export class DnDTestScreen extends React.Component {
 
   render() {
     return (
-      <SafeAreaView style={styles.container}>
-        <DnDList
-          style={styles.list}
-          rows={this.rows}
-          // itemSizes={this.state.itemSizes}
-          itemHeight={ROW_HEIGHT}
-          renderRow={this.renderRow}
-          handleDrop={this.handleDrop}
-          horizontal={false}
-          noDragHandle={false}
-        />
-      </SafeAreaView>
+      <DnDList
+        style={styles.list}
+        rows={this.rows}
+        itemHeight={ROW_HEIGHT}
+        renderRow={this.renderRow}
+        handleDrop={this.handleDrop}
+        // horizontal={false}
+        // noDragHandle={true}
+        // itemSizes={this.state.itemSizes}
+      />
     );
   }
 
@@ -87,11 +84,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     flexShrink: 1,
     // backgroundColor: 'gold',
-  },
-  switchButton: {
-    flex: 0,
-    margin: 10,
-    // backgroundColor: 'blue'
   },
   card: {
     flex: 1,

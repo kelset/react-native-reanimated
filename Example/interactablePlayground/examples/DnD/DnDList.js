@@ -27,7 +27,9 @@ export class DnDList extends React.Component {
     super(props);
     this.state = {
       scrollEnabled: true,
-      rows: props.rows,
+      rows: props.rows.map(row => {
+        return { ...row, key: uuid.v4() };
+      }),
     };
     this.draggableRows = [];
     this.currentPaceMakerRow = null;
@@ -139,7 +141,7 @@ export class DnDList extends React.Component {
 
     rows = this.handleDrop(from, to);
 
-    rows.forEach((row, idx, items) => {
+    rows.forEach((row, idx) => {
       row.key = uuid.v4();
     });
     // console.log(rows)

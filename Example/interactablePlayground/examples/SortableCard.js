@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, SafeAreaView, Text, TouchableOpacity } from 'react-native';
 // import Interactable from '../../Interactable';
 import { FlatListSortable } from './SortFlat/FlatListSortable';
 import { DnDTestScreen } from './DnD/DnDTestScreen';
@@ -21,7 +21,7 @@ export default class SortableCard extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         {!this.props.notActualValue ? (
           <DnDTestScreen />
         ) : (
@@ -32,7 +32,7 @@ export default class SortableCard extends React.Component {
             style={styles.list}
           />
         )}
-      </View>
+      </SafeAreaView>
     );
   }
 
