@@ -10,6 +10,8 @@ import {
   Platform,
 } from 'react-native';
 
+const SORTING_AREA_WIDTH = 80;
+
 export class DraggableRowComponent extends React.Component {
   _scrollDelta = 0;
 
@@ -255,14 +257,13 @@ export class DraggableRowComponent extends React.Component {
 
   render() {
     let handlerStyle = {
-      width: 80,
+      width: SORTING_AREA_WIDTH,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
       position: 'absolute',
       top: 0,
       bottom: this.props.horizontal ? 0 : null,
-      // backgroundColor: '#40413adf',
       height: this.props.horizontal ? null : this.size,
     };
 
@@ -374,7 +375,10 @@ export class DraggableRowComponent extends React.Component {
         return (
           <Animated.View style={[baseStyle, animationStyle]}>
             <View
-              style={{ flex: 1, flexDirection: 'row' }}
+              style={{
+                flex: 1,
+                flexDirection: 'row',
+              }}
               {...this._panResponder.panHandlers}>
               {rowContent}
             </View>
@@ -384,7 +388,11 @@ export class DraggableRowComponent extends React.Component {
     } else {
       return (
         <Animated.View style={[baseStyle, animationStyle]}>
-          <View style={{ flex: 1, flexDirection: 'row' }}>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'row',
+            }}>
             {rowContent}
             {dragHandle}
           </View>

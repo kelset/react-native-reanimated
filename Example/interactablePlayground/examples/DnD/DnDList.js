@@ -20,6 +20,10 @@ const arrayMove = (arr, oldIndex, newIndex) => {
   return arr; // for testing purposes
 };
 
+// TODO:
+// * better naming convention for rows, items and such
+// * Flow typing
+
 export class DnDList extends React.Component {
   scrollDelta = 0;
 

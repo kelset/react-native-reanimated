@@ -10,11 +10,7 @@ import {
 import { FlatListSortable } from './SortFlat/FlatListSortable';
 import { DnDList } from './DnD/DnDList';
 
-const ROW_HEIGHT = 60;
-
-// TODO:
-// * better naming convention for rows, items and such
-// * Flow typing
+const ROW_HEIGHT = 80;
 
 const arrayMove = (arr, oldIndex, newIndex) => {
   if (newIndex >= arr.length) {
@@ -39,6 +35,13 @@ export default class SortableCard extends React.Component {
       'Samantha',
       'Jenny',
       'Sharon',
+      'Mark',
+      'Carl',
+      'TJ',
+      'Julia',
+      'Soi',
+      'Andrew',
+      'Tom',
     ],
   };
 
@@ -67,9 +70,21 @@ export default class SortableCard extends React.Component {
 
   renderRow = (item, idx) => {
     return (
-      <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
-        <Text style={[styles.cardText, { width: 25 }]}>{idx}</Text>
-        <View style={styles.card}>
+      <View
+        style={{
+          flexDirection: 'row',
+          flex: 1,
+          marginVertical: 10,
+        }}>
+        <Text style={[styles.cardText, { width: 25, alignSelf: 'center' }]}>
+          {idx}
+        </Text>
+        <View style={[styles.card, { paddingRight: 80 }]}>
+          <TouchableOpacity
+            style={styles.cardButton}
+            onPress={this.onButtonPress}>
+            <Text style={{ textAlign: 'center' }}>Button</Text>
+          </TouchableOpacity>
           <Text style={styles.cardText}>{item}</Text>
         </View>
       </View>
@@ -92,11 +107,11 @@ export default class SortableCard extends React.Component {
 
   renderItem = ({ item, index }) => (
     // <Interactable.View key={item} snapPoints={[{ x: 0, damping: 0.5 }]}>
-    <TouchableOpacity style={styles.card}>
+    <TouchableOpacity style={styles.item}>
       <TouchableOpacity style={styles.cardButton} onPress={this.onButtonPress}>
         <Text style={{ textAlign: 'center' }}>Button</Text>
       </TouchableOpacity>
-      <Text style={styles.cardText}>{`${item}`}</Text>
+      <Text style={styles.itemText}>{`${item}`}</Text>
     </TouchableOpacity>
     // </Interactable.View>
   );
@@ -117,9 +132,9 @@ const styles = StyleSheet.create({
   },
   list: {
     flex: 1,
-    backgroundColor: 'red',
+    // backgroundColor: 'red',
   },
-  card: {
+  item: {
     marginVertical: 10,
     marginHorizontal: 25,
     paddingVertical: 10,
@@ -130,8 +145,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
   },
-  cardText: {
+  itemText: {
     color: 'white',
+    fontSize: 20,
+  },
+  card: {
+    flex: 1,
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginVertical: 2,
+    marginHorizontal: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: 'cornsilk',
+  },
+  cardText: {
+    color: 'black',
     fontSize: 20,
   },
   cardButton: {
