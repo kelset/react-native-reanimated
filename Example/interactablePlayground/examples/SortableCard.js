@@ -1,8 +1,31 @@
 import React from 'react';
-import { StyleSheet, SafeAreaView, Text, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet,
+  SafeAreaView,
+  TouchableOpacity,
+  View,
+  Text,
+} from 'react-native';
 // import Interactable from '../../Interactable';
 import { FlatListSortable } from './SortFlat/FlatListSortable';
-import { DnDTestScreen } from './DnD/DnDTestScreen';
+import { DnDList } from './DnD/DnDList';
+
+const ROW_HEIGHT = 60;
+
+// TODO:
+// * better naming convention for rows, items and such
+// * Flow typing
+
+const arrayMove = (arr, oldIndex, newIndex) => {
+  if (newIndex >= arr.length) {
+    var k = newIndex - arr.length;
+    while (k-- + 1) {
+      arr.push(undefined);
+    }
+  }
+  arr.splice(newIndex, 0, arr.splice(oldIndex, 1)[0]);
+  return arr; // for testing purposes
+};
 
 export default class SortableCard extends React.Component {
   state = {
@@ -23,7 +46,13 @@ export default class SortableCard extends React.Component {
     return (
       <SafeAreaView style={styles.container}>
         {!this.props.notActualValue ? (
-          <DnDTestScreen />
+          <DnDList
+            style={styles.list}
+            rows={this.state.data}
+            itemHeight={ROW_HEIGHT}
+            renderRow={this.renderRow}
+            handleDrop={this.handleDrop}
+          />
         ) : (
           <FlatListSortable
             onRowMoved={this.rowMoved}
@@ -36,11 +65,28 @@ export default class SortableCard extends React.Component {
     );
   }
 
-  rowMoved = e => {
-    const localData = Array.from(this.state.data);
-    localData.splice(e.to, 0, localData.splice(e.from, 1)[0]);
+  renderRow = (item, idx) => {
+    return (
+      <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
+        <Text style={[styles.cardText, { width: 25 }]}>{idx}</Text>
+        <View style={styles.card}>
+          <Text style={styles.cardText}>{item}</Text>
+        </View>
+      </View>
+    );
+  };
+
+  handleDrop = (from, to) => {
+    const localData = arrayMove(Array.from(this.state.data), from, to);
     this.setState({
       data: localData,
+    });
+  };
+
+  rowMoved = ({ from, to }) => {
+    const localData = Array.from(this.state.data);
+    this.setState({
+      data: arrayMove(localData, from, to),
     });
   };
 

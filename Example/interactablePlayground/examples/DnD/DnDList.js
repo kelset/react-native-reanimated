@@ -28,7 +28,7 @@ export class DnDList extends React.Component {
     this.state = {
       scrollEnabled: true,
       rows: props.rows.map(row => {
-        return { ...row, key: uuid.v4() };
+        return { row, key: uuid.v4() };
       }),
     };
     this.draggableRows = [];
@@ -36,10 +36,23 @@ export class DnDList extends React.Component {
     this.scrollContentOffset = { y: 0, x: 0 };
   }
 
-  // weird that this is not triggering anything, this needs to change to getDerived
   componentWillReceiveProps({ rows }) {
-    this.setState({ rows: rows });
+    this.setState({
+      rows: rows.map(row => {
+        return { row, key: uuid.v4() };
+      }),
+    });
   }
+
+  // static getDerivedStateFromProps(nextProps, prevState) {
+  //   if (nextProps.rows) {
+  //     return {
+  //       rows: nextProps.rows.map(row => {
+  //         return { row, key: uuid.v4() };
+  //       }),
+  //     };
+  //   }
+  // }
 
   _registerDraggableRow = draggableRow => {
     // console.log('Register',draggableRow.props.item)
@@ -66,7 +79,7 @@ export class DnDList extends React.Component {
         // TODO: Need to add a way to modify the styling of the overall piece here
         <DraggableRowComponent
           key={item.key}
-          item={item}
+          item={item.row}
           idx={idx}
           horizontal={this.props.horizontal}
           noDragHandle={this.props.noDragHandle}
@@ -139,14 +152,8 @@ export class DnDList extends React.Component {
       }
     }
 
-    rows = this.handleDrop(from, to);
-
-    rows.forEach((row, idx) => {
-      row.key = uuid.v4();
-    });
-    // console.log(rows)
+    this.handleDrop(from, to);
     this.scrollDelta = 0;
-    this.setState({ rows: rows });
     if (this.props.stopDrag) this.props.stopDrag();
 
     // this._reset(draggableRow)
