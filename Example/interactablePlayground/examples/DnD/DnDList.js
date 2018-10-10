@@ -64,8 +64,8 @@ export class DnDList extends React.Component {
     this.setState({ scrollEnabled: enabled });
   };
 
-  renderRow = item => {
-    return this.props.renderRow(item); // <RowContent item={item}/>
+  renderRow = (item, idx) => {
+    return this.props.renderRow(item, idx); // <RowContent item={item}/>
   };
 
   _renderRows = () => {
@@ -321,7 +321,7 @@ export class DnDList extends React.Component {
         <View
           style={{
             flex: 0,
-            backgroundColor: 'green',
+            // backgroundColor: 'green',
             height: this.props.horizontal ? null : contentSize,
             width: this.props.horizontal ? contentSize : null,
           }}>

@@ -260,14 +260,14 @@ export class DraggableRowComponent extends React.Component {
 
   render() {
     let handlerStyle = {
-      width: 60,
+      width: 80,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
       position: 'absolute',
       top: 0,
       bottom: this.context.shellContext.props.horizontal ? 0 : null,
-      backgroundColor: '#40413adf',
+      // backgroundColor: '#40413adf',
       height: this.context.shellContext.props.horizontal ? null : this.size,
     };
 
@@ -283,7 +283,7 @@ export class DraggableRowComponent extends React.Component {
         margin: 10,
         flexDirection: 'row',
         justifyContent: 'center',
-        backgroundColor: 'white',
+        // backgroundColor: 'white',
       };
       animationStyle = {
         transform: [
@@ -314,7 +314,7 @@ export class DraggableRowComponent extends React.Component {
         margin: 10,
         flexDirection: 'row',
         justifyContent: 'center',
-        backgroundColor: 'white',
+        // backgroundColor: 'white',
       };
       animationStyle = {
         transform: [
@@ -343,7 +343,10 @@ export class DraggableRowComponent extends React.Component {
       animationStyle.zIndex = this.state.zIndex;
     }
 
-    let rowContent = this.context.shellContext.renderRow(this.props.item);
+    let rowContent = this.context.shellContext.renderRow(
+      this.props.item,
+      this.props.idx
+    );
     let dragHandle = null;
     let draggable = this.context.shellContext.isDraggable(this);
 

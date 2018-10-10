@@ -66,11 +66,14 @@ export class DnDTestScreen extends React.Component {
     return targetItem === null ? true : targetItem.accept;
   };
 
-  renderRow = item => {
+  renderRow = (item, idx) => {
     return (
-      <View style={styles.card}>
-        <Text style={styles.cardText}>{item.text}</Text>
-        <Text style={styles.cardText}>Y</Text>
+      <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
+        <Text style={[styles.cardText, { width: 25 }]}>{idx}</Text>
+        <View style={styles.card}>
+          <Text style={styles.cardText}>{item.text}</Text>
+          <Text style={styles.cardText}>Y</Text>
+        </View>
       </View>
     );
   };
@@ -90,7 +93,7 @@ export class DnDTestScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'coral',
+    // backgroundColor: 'coral',
   },
   list: {
     marginHorizontal: 10,
@@ -98,16 +101,21 @@ const styles = StyleSheet.create({
     flex: 1,
     flexGrow: 1,
     flexShrink: 1,
-    backgroundColor: 'gold',
+    // backgroundColor: 'gold',
   },
-  switchButton: { flex: 0, margin: 10, backgroundColor: 'blue' },
+  switchButton: {
+    flex: 0,
+    margin: 10,
+    // backgroundColor: 'blue'
+  },
   card: {
     flex: 1,
     borderColor: 'gray',
     borderWidth: 1,
     borderRadius: 5,
-    padding: 4,
+    padding: 10,
     marginVertical: 2,
+    marginHorizontal: 10,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
