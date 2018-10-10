@@ -13,12 +13,7 @@ import {
 import PropTypes from 'prop-types';
 
 export class DraggableRowComponent extends React.Component {
-  _editable = false;
   _scrollDelta = 0;
-
-  get editable() {
-    return this._editable;
-  }
 
   get scrollDelta() {
     return this._scrollDelta;
@@ -26,19 +21,6 @@ export class DraggableRowComponent extends React.Component {
   set scrollDelta(sd) {
     this._scrollDelta = sd;
     this.scrollDeltaAnim.setValue(this.scrollDelta);
-  }
-
-  set editable(e) {
-    this._editable = e;
-    let self = this;
-    Animated.timing(this.editAnim, {
-      toValue: this._editable ? 60 : 0,
-      easing: Easing.linear,
-      duration: 100,
-      //   useNativeDriver: true,
-    }).start(() => {
-      self.setState({ editable: e });
-    });
   }
 
   static contextTypes = {
@@ -49,8 +31,6 @@ export class DraggableRowComponent extends React.Component {
     super(props);
     // this.lastStart = 0
     this.dragging = false;
-    this._editable = props.editable;
-    this.editAnim = new Animated.Value(this._editable ? 60 : 0);
     this.scrollDeltaAnim = new Animated.Value(0);
     this.dragAnim = new Animated.Value(0);
     this.drag_anim_pos = 0;
@@ -59,10 +39,7 @@ export class DraggableRowComponent extends React.Component {
     this.offset_val = 0;
     this.pace_maker = new Animated.Value(0);
     this.pace_maker_val = 0;
-    this.state = {
-      zIndex: 0,
-      editable: false,
-    };
+    this.state = { zIndex: 0 };
   }
 
   get start() {
@@ -283,7 +260,7 @@ export class DraggableRowComponent extends React.Component {
 
   render() {
     let handlerStyle = {
-      width: this.editAnim,
+      width: 60,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
@@ -374,7 +351,7 @@ export class DraggableRowComponent extends React.Component {
       if (draggable) {
         dragHandle = (
           <Animated.View
-            style={[handlerStyle, { left: 0 }]}
+            style={[handlerStyle, { right: 0 }]}
             {...this._panResponder.panHandlers}>
             <View style={{ paddingVertical: 10 }}>
               <Text>Reorder</Text>
@@ -384,14 +361,15 @@ export class DraggableRowComponent extends React.Component {
       } else {
         dragHandle = (
           <Animated.View
-            style={[handlerStyle, { left: 0, backgroundColor: 'transparent' }]}
+            style={[handlerStyle, { right: 0, backgroundColor: 'transparent' }]}
           />
         );
       }
     }
 
     if (this.context.shellContext.props.noDragHandle) {
-      if (this._editable || !draggable) {
+      // this props seem to suggest that you can have the whole row draggable
+      if (!draggable) {
         return (
           <Animated.View style={[baseStyle, animationStyle]}>
             <View style={{ flex: 1, flexDirection: 'row' }}>{rowContent}</View>

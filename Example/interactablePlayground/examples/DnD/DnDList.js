@@ -23,7 +23,6 @@ const arrayMove = (arr, oldIndex, newIndex) => {
 };
 
 export class DnDList extends React.Component {
-  _editable = false;
   scrollDelta = 0;
 
   constructor(props) {
@@ -40,17 +39,6 @@ export class DnDList extends React.Component {
   // weird that this is not triggering anything, this needs to change to getDerived
   componentWillReceiveProps({ rows }) {
     this.setState({ rows: rows });
-  }
-
-  get editable() {
-    return this._editable;
-  }
-
-  set editable(e) {
-    this._editable = e;
-    this.draggableRows.forEach(dr => {
-      dr.editable = e;
-    });
   }
 
   getChildContext() {
@@ -84,12 +72,7 @@ export class DnDList extends React.Component {
     return this.state.rows.map((item, idx, items) => {
       return (
         // TODO: Need to add a way to modify the styling of the overall piece here
-        <DraggableRowComponent
-          key={item.key}
-          item={item}
-          idx={idx}
-          editable={this.editable}
-        />
+        <DraggableRowComponent key={item.key} item={item} idx={idx} />
       );
     });
   };

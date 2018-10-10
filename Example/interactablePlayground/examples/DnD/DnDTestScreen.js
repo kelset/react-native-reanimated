@@ -1,13 +1,7 @@
 // https://github.com/gyetvan-andras/react-native-dnd-list/blob/master/DnDTestScreen.js
 
 import React from 'react';
-import {
-  SafeAreaView,
-  TouchableOpacity,
-  StyleSheet,
-  View,
-  Text,
-} from 'react-native';
+import { SafeAreaView, StyleSheet, View, Text } from 'react-native';
 
 import { DnDList } from './DnDList';
 
@@ -60,11 +54,6 @@ export class DnDTestScreen extends React.Component {
           startDrag={this._startDrag}
           stopDrag={this._stopDrag}
         />
-        <TouchableOpacity
-          style={styles.switchButton}
-          onPress={this._switchEditable}>
-          <Text>Switch</Text>
-        </TouchableOpacity>
       </SafeAreaView>
     );
   }
@@ -84,10 +73,6 @@ export class DnDTestScreen extends React.Component {
         <Text style={styles.cardText}>Y</Text>
       </View>
     );
-  };
-
-  _switchEditable = () => {
-    this.list.editable = !this.list.editable;
   };
 
   handleDrop = (from, to) => {
