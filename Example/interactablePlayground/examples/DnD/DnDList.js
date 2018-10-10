@@ -55,11 +55,11 @@ export class DnDList extends React.Component {
   };
 
   renderRow = (item, idx) => {
-    return this.props.renderRow(item, idx); // <RowContent item={item}/>
+    return this.props.renderRow(item, idx);
   };
 
   _renderRows = () => {
-    return this.state.rows.map((item, idx, items) => {
+    return this.state.rows.map((item, idx) => {
       return (
         // TODO: Need to add a way to modify the styling of the overall piece here
         <DraggableRowComponent
@@ -124,7 +124,7 @@ export class DnDList extends React.Component {
     let from = draggableRow.props.idx;
     let to = rows.length - 1;
     if (this.currentPaceMakerRow) {
-      if (!this.isAcceptItem(this.currentPaceMakerRow, draggableRow)) {
+      if (this.isLockedItem(this.currentPaceMakerRow, draggableRow)) {
         return false;
       }
       to = this.currentPaceMakerRow.props.idx;
@@ -132,7 +132,7 @@ export class DnDList extends React.Component {
       if (from < to) to -= 1;
       // arrayMove(rows, from, to)
     } else {
-      if (!this.isAcceptItem(null, draggableRow)) {
+      if (this.isLockedItem(null, draggableRow)) {
         return false;
       }
     }
@@ -151,7 +151,11 @@ export class DnDList extends React.Component {
   };
 
   itemSize = idx => {
-    return this.props.itemSizes[idx];
+    return this.props.itemSizes
+      ? this.props.itemSizes[idx]
+      : (this.props.horizontal
+          ? this.props.itemWidth
+          : this.props.itemHeight) || 5;
   };
 
   _dragMove = (gestureState, draggableRow) => {
@@ -200,7 +204,7 @@ export class DnDList extends React.Component {
 
       this.currentPaceMakerRow = rowToMakePlace;
       if (this.currentPaceMakerRow) {
-        if (!this.isAcceptItem(this.currentPaceMakerRow, draggableRow)) return;
+        if (this.isLockedItem(this.currentPaceMakerRow, draggableRow)) return;
         for (
           let i = this.currentPaceMakerRow.props.idx;
           i < this.draggableRows.length;
@@ -227,18 +231,22 @@ export class DnDList extends React.Component {
     if (this.props.isDraggable) {
       return this.props.isDraggable(row.props.item);
     } else {
-      return true;
+      return row.props.item.draggable !== undefined
+        ? row.props.item.draggable
+        : true;
     }
   };
 
-  isAcceptItem = (targetRow, draggedRow) => {
-    if (this.props.isAcceptItem) {
-      return this.props.isAcceptItem(
+  isLockedItem = (targetRow, draggedRow) => {
+    if (this.props.isLockedItem) {
+      return this.props.isLockedItem(
         targetRow ? targetRow.props.item : null,
         draggedRow.props.item
       );
     } else {
-      return true;
+      return targetRow.props.item.locked !== undefined
+        ? targetRow.props.item.locked
+        : false;
     }
   };
 

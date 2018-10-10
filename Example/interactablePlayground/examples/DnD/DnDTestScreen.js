@@ -23,18 +23,19 @@ export class DnDTestScreen extends React.Component {
   constructor(props) {
     super(props);
     this.rows = [];
-    let size = [];
+    // let size = [];
     for (let i = 0; i < ROW_COUNT; i++) {
       this.rows.push({
-        height: ROW_HEIGHT,
+        // height: ROW_HEIGHT,
         key: i + 1,
         text: `${i + 1}`,
-        draggable: true,
-        accept: true,
+        // optional fields
+        // draggable: true,
+        // locked: boolean - basically defaults to false
       });
     }
-    size = this.rows.map(row => row.height); // .push(40 + (i * 3))
-    this.state = { itemSizes: size };
+    // size = this.rows.map(row => row.height); // .push(40 + (i * 3))
+    // this.state = { itemSizes: size };
   }
 
   render() {
@@ -42,29 +43,17 @@ export class DnDTestScreen extends React.Component {
       <SafeAreaView style={styles.container}>
         <DnDList
           style={styles.list}
-          ref={ref => (this.list = ref)}
           rows={this.rows}
-          itemSizes={this.state.itemSizes}
+          // itemSizes={this.state.itemSizes}
+          itemHeight={ROW_HEIGHT}
           renderRow={this.renderRow}
-          isDraggable={this.isDraggable}
-          isAcceptItem={this.isAcceptItem}
           handleDrop={this.handleDrop}
           horizontal={false}
           noDragHandle={false}
-          startDrag={this._startDrag}
-          stopDrag={this._stopDrag}
         />
       </SafeAreaView>
     );
   }
-
-  isDraggable = item => {
-    return item.draggable;
-  };
-
-  isAcceptItem = (targetItem, draggedItem) => {
-    return targetItem === null ? true : targetItem.accept;
-  };
 
   renderRow = (item, idx) => {
     return (
@@ -80,14 +69,10 @@ export class DnDTestScreen extends React.Component {
 
   handleDrop = (from, to) => {
     this.rows = arrayMove(this.rows, from, to);
-    let size = this.rows.map(row => row.height); // .push(40 + (i * 3))
-    this.setState({ itemSizes: size });
+    // let size = this.rows.map(row => row.height); // .push(40 + (i * 3))
+    // this.setState({ itemSizes: size });
     return this.rows;
   };
-
-  _startDrag = () => {};
-
-  _stopDrag = () => {};
 }
 
 const styles = StyleSheet.create({
