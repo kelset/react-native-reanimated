@@ -1,7 +1,7 @@
 // https://github.com/gyetvan-andras/react-native-dnd-list/blob/master/DnDTestScreen.js
 
 import React from 'react';
-import { View, ScrollView, LayoutAnimation } from 'react-native';
+import { View, ScrollView } from 'react-native';
 
 import uuid from 'uuid';
 
@@ -23,21 +23,6 @@ const arrayMove = (arr, oldIndex, newIndex) => {
 };
 
 export class DnDList extends React.Component {
-  //   static propTypes = {
-  //     itemSizes: PropTypes.array.isRequired,
-  //     // itemSize: PropTypes.func.isRequired,
-  //     rows: PropTypes.array.isRequired,
-  //     renderRow: PropTypes.func.isRequired,
-  //     isDraggable: PropTypes.func.isRequired,
-  //     isDeletable: PropTypes.func.isRequired,
-  //     isAcceptItem: PropTypes.func.isRequired,
-  //     handleDrop: PropTypes.func.isRequired,
-  //     horizontal: PropTypes.any,
-  //     noDragHandle: PropTypes.any,
-  //     startDrag: PropTypes.func,
-  //     stopDrag: PropTypes.func,
-  //   };
-
   _editable = false;
   scrollDelta = 0;
 
@@ -241,18 +226,6 @@ export class DnDList extends React.Component {
     }
   };
 
-  deleteRow = row => {
-    let idx = row.props.idx;
-    LayoutAnimation.linear();
-    let rows = this.state.rows;
-    if (this.props.deleteRow) {
-      rows = this.props.deleteRow(idx);
-    } else {
-      rows.splice(idx, 1);
-    }
-    this.setState({ rows: rows });
-  };
-
   handleDrop = (from, to) => {
     if (this.props.handleDrop) {
       return this.props.handleDrop(from, to);
@@ -266,14 +239,6 @@ export class DnDList extends React.Component {
       return this.props.isDraggable(row.props.item);
     } else {
       return true;
-    }
-  };
-
-  isDeletable = row => {
-    if (this.props.isDeletable) {
-      return this.props.isDeletable(row.props.item);
-    } else {
-      return false;
     }
   };
 
@@ -373,7 +338,7 @@ export class DnDList extends React.Component {
         <View
           style={{
             flex: 0,
-            flexDirection: 'column',
+            backgroundColor: 'green',
             height: this.props.horizontal ? null : contentSize,
             width: this.props.horizontal ? contentSize : null,
           }}>

@@ -51,10 +51,8 @@ export class DnDTestScreen extends React.Component {
           ref={ref => (this.list = ref)}
           rows={this.rows}
           itemSizes={this.state.itemSizes}
-          deleteRow={this.deleteRow}
           renderRow={this.renderRow}
           isDraggable={this.isDraggable}
-          isDeletable={this.isDraggable}
           isAcceptItem={this.isAcceptItem}
           handleDrop={this.handleDrop}
           horizontal={false}
@@ -96,11 +94,6 @@ export class DnDTestScreen extends React.Component {
     this.rows = arrayMove(this.rows, from, to);
     let size = this.rows.map(row => row.height); // .push(40 + (i * 3))
     this.setState({ itemSizes: size });
-    return this.rows;
-  };
-
-  deleteRow = idx => {
-    this.rows.splice(idx, 2);
     return this.rows;
   };
 

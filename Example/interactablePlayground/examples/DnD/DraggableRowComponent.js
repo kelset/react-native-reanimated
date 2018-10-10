@@ -8,7 +8,6 @@ import {
   Animated,
   Easing,
   Platform,
-  TouchableOpacity,
 } from 'react-native';
 
 import PropTypes from 'prop-types';
@@ -179,7 +178,7 @@ export class DraggableRowComponent extends React.Component {
       this.context.shellContext.setScrollEnabled(false);
       this.context.shellContext._dragStart(gestureState, this);
       this.setState({ zIndex: 1000 }, () => {
-        // TODO: this is the one to blame for bouncyness
+        // TODO: this is the one to blame for bounciness
         Animated.spring(this.anim, {
           toValue: 0,
           velocity: 1,
@@ -280,10 +279,6 @@ export class DraggableRowComponent extends React.Component {
       duration: 600,
       // useNativeDriver: true
     }).start();
-  };
-
-  _delete = () => {
-    this.context.shellContext.deleteRow(this);
   };
 
   render() {
@@ -394,41 +389,12 @@ export class DraggableRowComponent extends React.Component {
         );
       }
     }
-    let deleteHandle = null;
-    if (this.context.shellContext.isDeletable(this)) {
-      deleteHandle = (
-        <Animated.View style={[handlerStyle, { right: 0 }]}>
-          <TouchableOpacity
-            onPress={this._delete}
-            style={{
-              flex: 1,
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: this.size,
-            }}>
-            <View style={{ paddingVertical: 10 }}>
-              <Text>Remove</Text>
-            </View>
-          </TouchableOpacity>
-        </Animated.View>
-      );
-    } else {
-      deleteHandle = (
-        <Animated.View
-          style={[handlerStyle, { left: 0, backgroundColor: 'transparent' }]}
-        />
-      );
-    }
 
     if (this.context.shellContext.props.noDragHandle) {
       if (this._editable || !draggable) {
         return (
           <Animated.View style={[baseStyle, animationStyle]}>
-            <View style={{ flex: 1, flexDirection: 'row' }}>
-              {rowContent}
-              {deleteHandle}
-            </View>
+            <View style={{ flex: 1, flexDirection: 'row' }}>{rowContent}</View>
           </Animated.View>
         );
       } else {
@@ -438,7 +404,6 @@ export class DraggableRowComponent extends React.Component {
               style={{ flex: 1, flexDirection: 'row' }}
               {...this._panResponder.panHandlers}>
               {rowContent}
-              {deleteHandle}
             </View>
           </Animated.View>
         );
@@ -449,7 +414,6 @@ export class DraggableRowComponent extends React.Component {
           <View style={{ flex: 1, flexDirection: 'row' }}>
             {rowContent}
             {dragHandle}
-            {deleteHandle}
           </View>
         </Animated.View>
       );
